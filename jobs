@@ -1,0 +1,24 @@
+job('maven_dsl'){
+description('Maven dsl project')
+scm {
+   github('AlokSachan/jwt-token-service','master')
+ }
+steps{
+maven{
+  mavenInstallation('mvn-jenkins')
+  goals('-B -DskipTests clean package')
+}
+maven{
+  mavenInstallation('mvn-jenkins')
+  goals('test')
+}
+shell('''
+      echo ****** RUNNING THE JAR ***********
+      java -jar /var/lib/jenkins/workspace/maven_dsl/target/jwt-token-service-0.0.1-SNAPSHOT.war
+   ''')
+}
+publishers{
+   archiveArtifacts('target/*.war')
+   archiveArtifacts('target/surefire-reports/*.xml')
+  }
+}
